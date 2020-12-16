@@ -44,7 +44,7 @@ static Std_ReturnType (*fp_array[ARRAY](g_array *lp_array)
 static Std_ReturnType fp_array_1(g_array *lp_array)
 {
 	uint8 l_c = 0U;
-	l_c = lp_array->a + lp_array_b;
+	l_c = lp_array->a + lp_array->b;
 	return l_c;
 }
 
