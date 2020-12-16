@@ -2,6 +2,9 @@
 #include <stdlib.h>
 
 #define ARRAY 4U
+#define E_OK  1U
+#define E_NOK 0U
+
 typedef unsigned char  uint8;
 typedef signed char    int8;
 typedef unsigned short uint16;
@@ -17,20 +20,23 @@ typedef long double    float128;
 typedef uint8 Std_ReturnType;
 typedef struct _g_array }{
 	uint8 a,
-	uint8 b
+	uint8 b,
+	uint8 c
 } g_array;
 
 static g_array sg_array; 
-static void module_retry_run(uint8 val, Std_ReturnType (*fp)(uint8 val) )
+static Std_ReturnType module_retry_fp(g_array *lp_array, Std_ReturnType (*fp)(g_raay *lp_array) )
 {
-	if (fp(val) != E_OK)
+	uint8 l_ret;
+	if (fp(lp_array) != E_OK)
 	{
-		fp(val);
+		l_ret = fp(lp_array);
 	}
 	else
 	{
-		asm("nop");
+		l_ret = E_OK;
 	}
+	return l_ret;
 }
 
 static Std_ReturnType (*fp_array[ARRAY](g_array *lp_array)
@@ -43,30 +49,34 @@ static Std_ReturnType (*fp_array[ARRAY](g_array *lp_array)
 
 static Std_ReturnType fp_array_1(g_array *lp_array)
 {
-	uint8 l_c = 0U;
-	l_c = lp_array->a + lp_array->b;
-	return l_c;
+	Std_ReturnType l_ret = E_OK;
+	lp_array->c = lp_array->a + lp_array->b;
+	return l_ret;
 }
 
 static Std_ReturnType fp_array_2(g_array *lp_array)
 {
-	uint8 l_c = 0U;
-	l_c = lp_array->a - lp_array->b;
-	return l_c;
+	Std_ReturnType l_ret = E_OK;
+	lp_array->c = lp_array->a - lp_array->b;
+	return l_ret;
 }
 
-static void fp_array_3(g_array *lp_array)
+static Std_ReturnType fp_array_3(g_array *lp_array)
 {
-	uint8 l_c = 0U;
-	l_c = lp_array->a * lp_array->b;
-	return l_c;
+	Std_ReturnType l_ret = E_OK;
+	lp_array->c = lp_array->a * lp_array->b;
+	return l_ret;
 }
 
-static void fp_array_4(g_array *lp_array)
+static Std_ReturnType fp_array_4(g_array *lp_array)
 {
-	uint8 l_c = 0U;
-	l_c = lp_array->a / lp_array->b;
-	return l_c;
+	Std_ReturnType l_ret = E_OK;
+	if (lp_array->b == 0U)
+	{
+		l_ret = E_NOK;	
+	} 
+	lp_array->c = lp_array->a / lp_array->b;
+	return l_ret;
 }
 
 void main(void)
@@ -75,10 +85,10 @@ void main(void)
 	lp_array->a = 2U;
 	lp_array->b = 1U;
 	uint8 l_idx = 0U;
-	uint8 l_c = 0U;
+	static Std_ReturnType l_ret[3] = E_OK;
 
 	for (l_idx = 0U ; l_idx < 3 ; l_idx++)
 	{
-		l_c = fp_array[l_array](lp_array);
+		l_ret[l_idx] = module_retry_fp( fp_array[l_array](lp_array) );
 	}
 }
