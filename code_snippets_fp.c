@@ -25,7 +25,7 @@ typedef struct _g_array }{
 } g_array;
 
 static g_array sg_array; 
-static Std_ReturnType module_retry_fp(g_array *lp_array, Std_ReturnType (*fp)(g_raay *lp_array) )
+static Std_ReturnType module_retry_fp(g_array *lp_array, Std_ReturnType (*fp)(g_array *lp_array) )
 {
 	uint8 l_ret;
 	if (fp(lp_array) != E_OK)
@@ -57,6 +57,14 @@ static Std_ReturnType fp_array_1(g_array *lp_array)
 static Std_ReturnType fp_array_2(g_array *lp_array)
 {
 	Std_ReturnType l_ret = E_OK;
+	if (lp_array->b > lp_array->a)
+	{
+		l_ret = E_NOK;
+	}
+	else 
+	{
+		;
+	}
 	lp_array->c = lp_array->a - lp_array->b;
 	return l_ret;
 }
@@ -75,6 +83,10 @@ static Std_ReturnType fp_array_4(g_array *lp_array)
 	{
 		l_ret = E_NOK;	
 	} 
+	else
+	{
+		;
+	}
 	lp_array->c = lp_array->a / lp_array->b;
 	return l_ret;
 }
